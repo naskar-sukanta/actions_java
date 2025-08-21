@@ -1,0 +1,26 @@
+    name: Manual Deployment
+    on:
+      workflow_dispatch:
+        inputs:
+          environment:
+            description: 'Deployment Environment'
+            required: true
+            default: 'staging'
+            type: choice
+            options:
+              - staging
+              - production
+          version:
+            description: 'Application Version'
+            required: false
+            type: string
+    jobs:
+      deploy:
+        runs-on: ubuntu-latest
+        steps:
+          - name: Checkout Code
+            uses: actions/checkout@v4
+          - name: Deploy to Environment
+            run: |
+              echo "Deploying version ${{ github.event.inputs.version }} to ${{ github.event.inputs.environment }}..."
+              # Your deployment commands here
