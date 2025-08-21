@@ -2,9 +2,9 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [ main ] # Trigger on pushes to the main branch
+    branches: [ master ] # Trigger on pushes to the master branch
   pull_request:
-    branches: [ main ] # Trigger on pull requests targeting the main branch
+    branches: [ master ] # Trigger on pull requests targeting the master branch
 
 jobs:
   build:
