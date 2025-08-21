@@ -1,3 +1,5 @@
+name: Docker container actions
+
 on: [push]
 
 jobs:

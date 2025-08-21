@@ -1,4 +1,4 @@
-name: CI for Maven Project
+name: CI Workflow Dispath
 
 on:
   workflow_dispatch:
