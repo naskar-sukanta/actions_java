@@ -1,0 +1,24 @@
+name: Java CI with Maven
+
+on:
+  push:
+    branches: [ main ] # Trigger on pushes to the main branch
+  pull_request:
+    branches: [ main ] # Trigger on pull requests targeting the main branch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest # Use the latest Ubuntu runner
+
+    steps:
+    - uses: actions/checkout@v4 # Checkout the repository code
+
+    - name: Set up JDK 17 # Set up Java Development Kit
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17' # Specify the Java version
+        distribution: 'temurin' # Choose a Java distribution (e.g., Temurin)
+        cache: 'maven' # Cache Maven dependencies for faster builds
+
+    - name: Build with Maven
+      run: mvn -B package --file pom.xml # Execute Maven build command
