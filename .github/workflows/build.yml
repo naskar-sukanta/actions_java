@@ -21,4 +21,10 @@ jobs:
         cache: 'maven' # Cache Maven dependencies for faster builds
 
     - name: Build with Maven
-      run: mvn -B package --file pom.xml # Execute Maven build command
+    - run: mvn --batch-mode --update-snapshots verify 
+    - run: mkdir staging && cp  target/*.jar staging
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v4.6.2
+      with:
+         name:  Package
+         path:  staging
