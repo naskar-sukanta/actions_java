@@ -11,10 +11,11 @@ jobs:
     runs-on: ubuntu-latest # Use the latest Ubuntu runner
 
     steps:
-    - uses: actions/checkout@v4 # Checkout the repository code
+    - name: checkout
+    - uses: actions/checkout@v5 # Checkout the repository code
 
     - name: Set up JDK 17 # Set up Java Development Kit
-      uses: actions/setup-java@v4
+      uses: actions/setup-java@v5
       with:
         java-version: '17' # Specify the Java version
         distribution: 'temurin' # Choose a Java distribution (e.g., Temurin)
