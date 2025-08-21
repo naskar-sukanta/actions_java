@@ -1,30 +1,24 @@
-name: Java CI with Maven
+name: CI for Maven Project
+
 
 on:
-  push:
-    branches: [ master ] # Trigger on pushes to the master branch
-  pull_request:
-    branches: [ master ] # Trigger on pull requests targeting the master branch
+  workflow_dispatch:
 
 jobs:
-  build:
-    runs-on: ubuntu-latest # Use the latest Ubuntu runner
-
-    steps:
-    - uses: actions/checkout@v5 # Checkout the repository code
-
-    - name: Set up JDK 17 # Set up Java Development Kit
-      uses: actions/setup-java@v5
-      with:
-        java-version: '17' # Specify the Java version
-        distribution: 'temurin' # Choose a Java distribution (e.g., Temurin)
-        cache: 'maven' # Cache Maven dependencies for faster builds
-
-    - name: Build with Maven
-    - run: mvn --batch-mode --update-snapshots verify 
-    - run: mkdir staging && cp  target/*.jar staging
-    - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v4.6.2
-      with:
+ checkout:
+   runs-on: ubuntu-latest
+   steps:
+     - name: Checkout
+       uses: actions/checkout@v4.2.2
+     - name: Setup Java JDK
+       uses: actions/setup-java@v3.14.1
+       with:
+          java-version: '17'
+          distribution: 'microsoft'
+     - run: mvn --batch-mode --update-snapshots verify 
+     - run: mkdir staging && cp  target/*.jar staging
+     - name: Upload a Build Artifact
+       uses: actions/upload-artifact@v4.6.2
+       with:
          name:  Package
          path:  staging
