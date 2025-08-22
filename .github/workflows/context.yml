@@ -8,4 +8,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Log the initiating actor
-      - run: echo "Workflow initiated by: ${{ github.actor }}"
+      - run: echo "Workflow initiated by:${{ github.actor }}"
