@@ -1,0 +1,43 @@
+name: CI/CD Pipeline using context - select environment
+
+on:
+  workflow_dispatch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v5
+    - name: Set up JDK 17
+      uses: actions/setup-java@v5
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: 'maven'
+    - run: mvn --batch-mode --update-snapshots verify 
+    - run: mkdir staging && cp  target/*.jar staging
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v4.6.2
+      with:
+         name:  Package
+         path:  staging
+         
+  deply-to-environment:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v5
+      - name: Set up environment variable
+        run: |
+          if [ "${{ github.ref }}" == "refs/heads/main" ]; then
+            echo "DEPLOY_ENV=production" >> $GITHUB_ENV
+          else
+            echo "DEPLOY_ENV=staging" >> $GITHUB_ENV >> $GITHUB_ENV
+          fi
+      - name: Deploy to ${{ env.DEPLOY_ENV }} environment
+        run: |
+          echo "Deploying to the ${{ env.DEPLOY_ENV }} environment"
+          # Your deployment script here
+
+
