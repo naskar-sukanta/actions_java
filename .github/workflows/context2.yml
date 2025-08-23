@@ -1,4 +1,4 @@
-name: CI/CD Pipeline using context - select environment
+name: CI/CD Pipeline using context - select env
 
 on:
   workflow_dispatch
