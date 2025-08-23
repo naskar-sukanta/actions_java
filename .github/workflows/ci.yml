@@ -34,11 +34,11 @@ jobs:
     needs: test
     strategy:
       matrix:
-        runner: [ubuntu-latest, self-hosted-ci]
+        runner: [ubuntu-latest, ubuntu-latest]
         include:
           - runner: ubuntu-latest
             artifact-name: hello-world-self-hosted # hello-world-linux
-          - runner: self-hosted-ci
+          - runner: ubuntu-latest
             artifact-name: hello-world-self-hosted
       fail-fast: false
     
