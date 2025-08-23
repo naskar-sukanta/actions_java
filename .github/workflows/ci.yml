@@ -5,41 +5,67 @@ on:
     branches: [ master, develop ]
   pull_request:
     branches: [ master, develop ]
-    
+
   workflow_dispatch:
 
 env:
   JAVA_VERSION: '11'
 
 jobs:
-  build:
-    runs-on: ${{ matrix.runner }}
-    strategy:
-      matrix:
-        runner: [ubuntu-latest, self-hosted-ci]
-      fail-fast: false
-
+  test:
+    runs-on: ubuntu-latest
+    
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Set up JDK 11
+    - name: Set up JDK ${{ env.JAVA_VERSION }}
       uses: actions/setup-java@v3
       with:
-        java-version: '11'
+        java-version: ${{ env.JAVA_VERSION }}
         distribution: 'temurin'
         cache: 'maven'
 
-    # Use regular Maven package instead of assembly:single
-    - name: Build with Maven
-      run: mvn clean package -DskipTests
+    - name: Run tests
+      run: mvn test
 
-    - name: List built artifacts
+  build:
+    runs-on: ${{ matrix.runner }}
+    needs: test
+    strategy:
+      matrix:
+        runner: [ubuntu-latest, self-hosted-ci]
+        include:
+          - runner: ubuntu-latest
+            artifact-name: hello-world-self-hosted # hello-world-linux
+          - runner: self-hosted-ci
+            artifact-name: hello-world-self-hosted
+      fail-fast: false
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up JDK ${{ env.JAVA_VERSION }}
+      uses: actions/setup-java@v3
+      with:
+        java-version: ${{ env.JAVA_VERSION }}
+        distribution: 'temurin'
+        cache: 'maven'
+
+    - name: Build with Maven
+      run: mvn clean compile
+
+    - name: Create JAR
+      run: mvn package -DskipTests
+
+    - name: List built files
       run: ls -la target/
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ matrix.artifact-name }}
+        name: ${{ matrix.artifact-name }}  # ← CRITICAL: This must be provided
         path: target/*.jar
         retention-days: 7
+        if-no-files-found: warn
