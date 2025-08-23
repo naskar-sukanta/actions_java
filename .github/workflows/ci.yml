@@ -37,7 +37,7 @@ jobs:
         runner: [ubuntu-latest, ubuntu-latest]
         include:
           - runner: ubuntu-latest
-            artifact-name: hello-world-self-hosted # hello-world-linux
+            artifact-name: hello-world-linux
           - runner: ubuntu-latest
             artifact-name: hello-world-self-hosted
       fail-fast: false
