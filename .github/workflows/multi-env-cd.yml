@@ -1,0 +1,46 @@
+name: CD Pipeline
+
+on:
+  workflow_run:
+    workflows: ["CI Pipeline"]
+    types:
+      - completed
+    branches: [main, develop]
+    
+  workflow_dispatch:
+
+env:
+  DEPLOY_TIMEOUT: 600000
+
+jobs:
+  deploy-staging:
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'master' }}
+    runs-on: self-hosted-deploy
+    environment: staging
+    timeout-minutes: 15
+    
+    steps:
+    - name: Checkout deployment scripts
+      uses: actions/checkout@v4
+      with:
+        sparse-checkout: |
+          deploy-scripts/
+          .github/scripts/
+        ref: ${{ github.event.workflow_run.head_sha }}
+
+    - name: Download artifact from CI
+      uses: actions/download-artifact@v4
+      with:
+        name: hello-world-self-hosted
+        path: artifacts
+
+    - name: Setup SSH
+      uses: webfactory/ssh-agent@v0.8.0
+      with:
+        ssh-private-key: ${{ secrets.STAGING_SSH_PRIVATE_KEY }}
+
+    - name: Deploy to staging host
+      run: |
+        chmod +x .github/scripts/deploy.sh
+        .github/scripts/deploy.sh staging ${{ secrets.STAGING_HOST }} \
+        ${{ secrets.STAGING_USER }} ${{ secrets.STAGING_DEPLOY_PATH }}
