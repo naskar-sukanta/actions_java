@@ -2,7 +2,7 @@ name: CD Pipeline
 
 on:
   workflow_run:
-    workflows: ["Java CI with Maven"]
+    workflows: ["CI Pipeline"]
     types:
       - completed
     branches: [master, develop]
